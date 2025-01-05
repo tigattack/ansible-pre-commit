@@ -10,20 +10,17 @@ done
 checker() {
   type="${1}"
   extra_path="${2}"
-  if [ "$extra_path" = "" ] ; then
-    grep_folder="*"
-  else
-    grep_folder="${extra_path}"
-  fi
+  vars=""
 
-  for folder in ${extra_path}${type} ; do
+  for folder in ${extra_path}/${type} ; do
     if [ -d "${folder}" ] && [ -f "${folder}/main.yml" ] ; then
       grep -v '^#' "${folder}/main.yml" | grep -v '^$' | grep -v -- '---' | grep -v '^ ' | grep -v '^_' | cut -d: -f1 | while read -r variable ; do
-        matches="$(grep -Ril "${variable}" -- "${grep_folder}" | grep -vEc '(tasks/assert.yml|README.md)')"
+        matches="$(grep -Ril "${variable}" -- "${extra_path}" | grep -vEc '(tasks/assert.yml|README.md)')"
         internalmatches="$(grep -ic "${variable}" "${folder}/main.yml")"
         if [ "${matches}" -le 1 ] && [  "${internalmatches}" -le 1 ] ; then
           echo "${folder}/main.yml defines ${variable} which is not used."
         fi
+        vars="${vars} ${variable}"
       done
     fi
   done
@@ -44,7 +41,7 @@ done
 shift "$((OPTIND -1))"
 
 if [ -z "$sub_folder" ]; then
-  sub_folder=""
+  sub_folder="."
 fi
 
 # Save the errors in a variable "errors".
