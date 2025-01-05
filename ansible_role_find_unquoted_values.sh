@@ -11,13 +11,16 @@ checker() {
     sub_folder="${1}"
     for folder in $sub_folder/$directory ; do
       if [ -d "${folder}" ] ; then
+        var_name_pattern='^.*:[a-zA-z0-9\-\_]*:'
         version_pattern='[a-zA-z0-9\-\_]*: [0-9].*\.'
         colon_pattern='[a-zA-z0-9\-\_]*: [a-zA-z0-9\-\_].*:.*'
         pattern="(${version_pattern}|${colon_pattern})"
-        matches=$(find "${folder}" -name '*.yml' -exec grep -E "^${pattern}" {} \; | wc -l)
-        if [ -n "${matches}" ] ; then
-          if [ "${matches}" -gt 0 ] ; then
-            echo "Found $((matches * 1)) risky and unquoted values in ${folder}."
+        matches=$(find "${folder}" -name '*.yml' -exec grep -HE "^${pattern}" {} \; | grep -oE ${var_name_pattern} | sed -e 's/.$//' -e 's/:/: /')
+        match_count=$(echo "${matches}" | wc -l)
+        if [ -n "${match_count}" ] ; then
+          if [ "${match_count}" -gt 0 ] ; then
+            echo "Found $((match_count * 1)) risky and unquoted values in ${folder}:"
+            echo "${matches}"
           fi
         fi
       fi
