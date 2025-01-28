@@ -20,7 +20,7 @@ checker() {
         if [ -n "${match_count}" ] ; then
           if [ "${match_count}" -gt 0 ] ; then
             echo "Found $((match_count * 1)) risky and unquoted values in ${folder}:"
-            echo "${matches}"
+            echo $matches | sed 's/ \./\n./g'
           fi
         fi
       fi
