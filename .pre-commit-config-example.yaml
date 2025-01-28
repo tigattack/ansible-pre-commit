@@ -1,0 +1,22 @@
+---
+repos:
+  - repo: https://github.com/robertdebock/pre-commit
+    rev: v1.5.3
+    hooks:
+      - id: ansible_role_find_empty_files
+        pass_filenames: false
+      - id: ansible_role_find_empty_directories
+        pass_filenames: false
+      - id: ansible_role_fix_readability
+        pass_filenames: false
+      - id: ansible_role_find_undefined_handlers
+        pass_filenames: false
+      - id: ansible_role_find_horizontal_when
+        pass_filenames: false
+  - repo: https://github.com/tigattack/ansible-pre-commit
+    rev: v1.6.1
+    hooks:
+      - id: ansible_role_find_unused_variable
+        pass_filenames: false
+      - id: ansible_role_find_unquoted_values
+        pass_filenames: false
